@@ -1,0 +1,75 @@
+# Created by https://www.toptal.com/developers/gitignore/api/c++
+# Edit at https://www.toptal.com/developers/gitignore?templates=c++
+
+### C++ ###
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# End of https://www.toptal.com/developers/gitignore/api/c++
+
+# 1. Ignore everything in the resources folder
+resources/*
+
+# 2. Allow specific Textures (Whitelist)
+!resources/grass1.png
+!resources/grass2.png
+!resources/grass3.png
+!resources/aititle.png
+!resources/brick.png
+!resources/clay.png
+!resources/player2.png
+!resources/goomba.png
+!resources/bomb.png
+!resources/explosion-all.png
+!resources/diamond.png
+!resources/emarald.png
+!resources/gold.png
+!resources/newbg.jpg
+!resources/background.jpg
+!resources/heart.png
+!resources/bomb-radius.png
+!resources/bomb-count.png
+!resources/clock.png
+
+# 3. Allow specific Models (Whitelist)
+!resources/player.glb
+!resources/enemy.glb
+!resources/box.glb
+!resources/block-grass-large.glb
+!resources/block-grass-narrow.glb
+!resources/bomb2.glb
+!resources/bolt.glb
+!resources/star.glb
+!resources/bombcount.glb
+
+lib
