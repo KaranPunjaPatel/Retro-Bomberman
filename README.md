@@ -1,18 +1,12 @@
-<style>
- .image-container {
-            margin: 30px 0;
-            text-align: center;
-        }
-        .image-container img {
-            max-width: 80%;
-            border-radius: 6px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        }
-</style>
+
 <h1 align="center">Retro Bomberman 3D</h1>
 
-<div class="image-container">
-    <img src="./images/menu.png" alt="Death Menu">
+<div style="margin: 30px 0; text-align: center;">
+    <img 
+        src="./images/menu.png" 
+        alt="Start Menu"
+        style="max-width: 80%; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"
+    >
 </div>
 
 ## Built with
@@ -65,14 +59,26 @@ real-time gameplay systems.
 </ul>
 
 <h2>Gameplay Screenshots</h2>
-<div class="image-container">
-    <img src="./images/gameplay.png" alt="Bomberman Gameplay">
-    <div class="caption">In-game screenshot showing active gameplay during a procedurally generated level.</div>
+<div style="margin: 30px 0; text-align: center;">
+    <img 
+        src="./images/gameplay.png" 
+        alt="Bomberman Gameplay"
+        style="max-width: 80%; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"
+    >
+    <div style="margin-top: 8px; font-size: 0.9em; color: #555;">
+        In-game screenshot showing active gameplay during a procedurally generated level.
+    </div>
 </div>
 
-<div class="image-container">
-    <img src="./images/death_menu.png" alt="Death Menu">
-    <div class="caption">Death menu displayed after player elimination, featuring animated UI elements.</div>
+<div style="margin: 30px 0; text-align: center;">
+    <img 
+        src="./images/death_menu.png" 
+        alt="Death Menu"
+        style="max-width: 80%; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"
+    >
+    <div style="margin-top: 8px; font-size: 0.9em; color: #555;">
+        Death menu displayed after player elimination, featuring animated UI elements.
+    </div>
 </div>
 
 <h2>Conclusion</h2>
