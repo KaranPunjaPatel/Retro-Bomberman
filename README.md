@@ -1,28 +1,25 @@
 
 <h1 align="center">Retro Bomberman 3D</h1>
 
-<div style="margin: 30px 0; text-align: center;">
+<p align="center">
+  <img src="https://img.shields.io/badge/Language-C%2B%2B14-blue.svg" alt="C++14">
+  <img src="https://img.shields.io/badge/Library-Raylib_5.5-red.svg" alt="Raylib">
+  <img src="https://img.shields.io/badge/UI-Raygui-orange.svg" alt="Raygui">
+  <img src="https://img.shields.io/badge/Platform-Windows-lightgrey.svg" alt="Windows">
+</p>
+
+<div align="center" style="margin: 30px 0;">
     <img 
         src="./images/menu.png" 
         alt="Start Menu"
-        style="max-width: 80%; border-radius: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);"
+        style="max-width: 80%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.25);"
     >
 </div>
 
-## Built with
-
-- C++
-- Raylib
-- Raygui
 
 ## About The Project
 
-<p>
-A modern recreation of the classic <strong>Bomberman</strong> game, featuring
-<strong>3D animations</strong>, <strong>procedural level generation</strong>, and
-a reusable game engine core. The project supports smooth character movement,
-animated UI elements, and dynamic, replayable gameplay.
-</p>
+**Retro Bomberman 3D** is a modern 3D action arcade game built in C++ using **Raylib** and **Raygui**. It features animated 3D character models, procedural level generation, dynamic powerup systems, handcrafted campaign levels, and a full **3D 1vs1 local multiplayer mode**.
 
 <h2>Project Overview</h2>
 
@@ -35,13 +32,27 @@ real-time gameplay systems.
 
 <h2>Key Features</h2>
 
-<ul>
-    <li>3D character animations including running, idle, and stopping states</li>
-    <li>Animated GUI elements such as menu buttons and transitions</li>
-    <li>Procedural, random level generation with guaranteed solvable layouts</li>
-    <li>Offline gameplay with consistent and repeatable mechanics</li>
-    <li>Reusable engine core for game-state management and logic</li>
-</ul>
+- **3D 1vs1 Local Multiplayer**: Play head-to-head on the same keyboard with custom split controls and overhead 3D cameras.
+- **Single-Player Campaign**: 5 handcrafted balanced levels plus a infinite **Random Procedural Map Generator**.
+- **Dynamic Powerup System**: Collect Speed Boosts, Bomb Count Upgrades, and Bomb Explosion Radius Extensions.
+- **Animated 3D Characters & Enemies**: Smooth skeletal animations for walking, running, idle, and combat.
+- **Responsive UI & Glassmorphism Aesthetics**: Polished main menu, level selector, and level results window.
+
+## Controls
+| Action | Player 1 (WASD) | Player 2 (1vs1 Mode) |
+| :--- | :--- | :--- |
+| **Move Up / Down** | `W` / `S` | `Up Arrow` / `Down Arrow` |
+| **Move Left / Right** | `A` / `D` | `Left Arrow` / `Right Arrow` |
+| **Drop Bomb** | `Space` | `Right Ctrl` |
+| **Pause / Exit Menu** | `ESC` | `ESC` |
+---
+
+## Built with
+
+- **C++14** – Game Logic & Physics Core
+- **Raylib 5.5** – 3D Graphics Rendering, Animations & Audio
+- **Raygui** – User Interface & Menus
+- **MinGW-w64 / g++** – Compiler Suite
 
 <h2>Technical Highlights</h2>
 
@@ -57,6 +68,24 @@ real-time gameplay systems.
     </li>
     <li>Designed rendering logic to integrate animated 3D models with gameplay systems</li>
 </ul>
+
+## Quick Start & Building
+### Prerequisites
+Ensure you have **g++** and **Raylib** installed.
+### Build & Run with PowerShell Helper
+```powershell
+# Build and immediately run the game in Release mode
+.\make.ps1 play
+
+# Rebuild from scratch
+.\make.ps1 rebuild
+```
+
+### Build with MinGW Make
+```bash
+make game
+./game.exe
+```
 
 <h2>Gameplay Screenshots</h2>
 <div style="margin: 30px 0; text-align: center;">
@@ -81,16 +110,7 @@ real-time gameplay systems.
     </div>
 </div>
 
-<h2>Conclusion</h2>
-
-<p>
-This project demonstrates strong fundamentals in game engine architecture,
-procedural content generation, and real-time gameplay systems. By combining
-classic Bomberman mechanics with modern 3D rendering and animation, the project
-achieves both technical robustness and engaging gameplay.
-</p>
-
-<h2>Attribution</h2>
+<h2>Attribution & Credits</h2>
 
 <p>
 The following third-party resources were used for 3D models and animations in this project.
