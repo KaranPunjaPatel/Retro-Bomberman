@@ -1,3 +1,5 @@
+#pragma once 
+
 #include "map.h"
 
 class Map1vs1 : public Map
@@ -19,5 +21,3 @@ public:
   void MoveCamera();
 
 };
-
-

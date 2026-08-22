@@ -1,5 +1,6 @@
-#include "structure.h"
+#pragma once
 
+#include "structure.h"
 
 // '^' is for player
 // '.' is empty spot

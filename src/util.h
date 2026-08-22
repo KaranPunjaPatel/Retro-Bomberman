@@ -1,7 +1,9 @@
 #pragma once
+
 #include <string>
-#include <raylib.h>
 #include <cmath>
+
+#include <raylib.h>
 
 bool Vector2Equal(Vector2 first, Vector2 second);
 

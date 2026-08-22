@@ -1,3 +1,4 @@
+
 #include "util.h"
 
 bool Vector2Equal(Vector2 first, Vector2 second){

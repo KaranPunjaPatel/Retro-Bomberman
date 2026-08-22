@@ -1,12 +1,13 @@
 #pragma once
-#include <raylib.h>
 
-#include <vector> 
-#include <thread>
 #include <atomic>
-#include <mutex>
-#include <memory>
 #include <cmath>
+#include <memory>
+#include <mutex>
+#include <thread>
+#include <vector>
+
+#include <raylib.h>
 
 #include "bomb.h"
 #include "macros.h"
@@ -14,31 +15,27 @@
 
 class Map;
 
-class Human {
+enum class StatType
+{
+  Speed,
+  BombRadius,
+  BombCount
+};
 
-// private:
+class Human
+{
 public:
   Human(std::shared_ptr<Map> map, int id, size_t row, size_t column);
   ~Human();
 
-  std::shared_ptr<Map> map;
-  
-  float  speed;
-  size_t bombCount;
-  size_t bombRadius;
-
-  bool alive;
-
-  int id;
-  
-  Rectangle rect;
-
-  int rowPos;
-  int colPos;
-
-  Direction direction; 
-
-  Texture2D texture;
+  [[nodiscard]] Rectangle &GetRectangle() noexcept;
+  [[nodiscard]] int GetRowPos() const noexcept;
+  [[nodiscard]] int GetColumnPos() const noexcept;
+  [[nodiscard]] bool IsAlive() const noexcept;
+  [[nodiscard]] size_t GetBombCount() const noexcept;
+  [[nodiscard]] size_t GetBombRadius() const noexcept;
+  [[nodiscard]] float GetSpeed() const noexcept;
+  [[nodiscard]] Direction GetDirection() const noexcept;
 
   virtual void Dies() = 0;
 
@@ -48,8 +45,26 @@ public:
   void ChangePosition();
   void IsTouchingBoundary();
 
-  void SetDirection(Direction direction);
+  void SetDirection(Direction newDirection) noexcept;
+  void ModifyStat(StatType stat, float amount) noexcept;
+  void SetSpeed(float amount) noexcept;
+  void SetBombCount(size_t amount) noexcept;
+  void SetBombRadius(size_t amount) noexcept;
 
+protected:
+  std::shared_ptr<Map> map;
 
+  float speed;
+  size_t bombCount;
+  size_t bombRadius;
 
+  int id;
+  int rowPos;
+  int colPos;
+
+  bool alive;
+  Direction direction;
+
+  Rectangle rect;
+  Texture2D texture;
 };

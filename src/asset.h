@@ -1,54 +1,53 @@
 #pragma once
-#ifndef ASSET_H
-#define ASSET_H
 
-#include <raylib.h>
-#include <vector>
+#include <atomic>
 #include <iostream>
 #include <memory>
-#include <thread>
 #include <mutex>
-#include <atomic>
+#include <thread>
+#include <vector>
+
+#include <raylib.h>
+#include <raymath.h>
+
 #include "macros.h"
-#include "raymath.h"
 
 // Define asset type constants
-#define t_GRASS1      0
-#define t_GRASS2      1
-#define t_GRASS3      2
-#define t_TITLE       3
-#define t_BRICK       4
-#define t_CLAY        5
-#define t_PLAYER      6
-#define t_ENEMY       7
-#define t_BOMB        8
-#define t_EXPLOSION   9
-#define t_SPEED       10
-#define t_BOMB_RADIUS 11
-#define t_BOMB_COUNT  12
-#define t_BG          13
-#define t_HEART       14
-#define t_RADIUS      15
-#define t_COUNT       16
-#define t_CLOCK       17
+constexpr int t_GRASS1 = 0;
+constexpr int t_GRASS2 = 1;
+constexpr int t_GRASS3 = 2;
+constexpr int t_TITLE = 3;
+constexpr int t_BRICK = 4;
+constexpr int t_CLAY = 5;
+constexpr int t_PLAYER = 6;
+constexpr int t_ENEMY = 7;
+constexpr int t_BOMB = 8;
+constexpr int t_EXPLOSION = 9;
+constexpr int t_SPEED = 10;
+constexpr int t_BOMB_RADIUS = 11;
+constexpr int t_BOMB_COUNT = 12;
+constexpr int t_BG = 13;
+constexpr int t_HEART = 14;
+constexpr int t_RADIUS = 15;
+constexpr int t_COUNT = 16;
+constexpr int t_CLOCK = 17;
 
-#define m_PLAYER      0
-#define m_EMEMY       1
-#define m_BOX         2
-#define m_BOUNDARY    3
-#define m_BRICK       4
-#define m_BOMB        5
-#define m_SPEED       6
-#define m_BOMB_RADIUS 7
-#define m_BOMB_COUNT  8
+constexpr int m_PLAYER = 0;
+constexpr int m_ENEMY = 1;
+constexpr int m_BOX = 2;
+constexpr int m_BOUNDARY = 3;
+constexpr int m_BRICK = 4;
+constexpr int m_BOMB = 5;
+constexpr int m_SPEED = 6;
+constexpr int m_BOMB_RADIUS = 7;
+constexpr int m_BOMB_COUNT = 8;
 
-
-#define END         Vector2{.x = 64, .y = 0 }
-#define PIPE        Vector2{.x = 64, .y = 32}
-#define MIDDLE      Vector2{.x = 32, .y = 32}
-#define FOUR_MERGE  Vector2{.x =  0, .y = 32}
-#define THREE_MERGE Vector2{.x = 32, .y = 0 }
-#define TWO_MERGE   Vector2{.x =  0, .y = 0 }
+constexpr Vector2 END = Vector2{.x = 64, .y = 0};
+constexpr Vector2 PIPE = Vector2{.x = 64, .y = 32};
+constexpr Vector2 MIDDLE = Vector2{.x = 32, .y = 32};
+constexpr Vector2 FOUR_MERGE = Vector2{.x = 0, .y = 32};
+constexpr Vector2 THREE_MERGE = Vector2{.x = 32, .y = 0};
+constexpr Vector2 TWO_MERGE = Vector2{.x = 0, .y = 0};
 
 // Declare the textures vector as extern
 // extern std::vector<Texture2D> textures;
@@ -60,18 +59,17 @@ Texture2D getTexture(int asset);
 void unloadAssets();
 
 void loadModels();
-void pushModel(const char* file, float width, float length);
+void pushModel(const char *file, float width, float length);
 std::shared_ptr<Model> getModel(int asset);
 
 void loadAnimations();
-std::pair<ModelAnimation*,int> getAnimation(int asset);
+std::pair<ModelAnimation *, int> getAnimation(int asset);
 
 void loadAssets();
 
-// extern std::atomic_bool b_textures   ; 
-// extern std::atomic_bool b_models     ; 
-// extern std::atomic_bool b_animations ; 
+// extern std::atomic_bool b_textures   ;
+// extern std::atomic_bool b_models     ;
+// extern std::atomic_bool b_animations ;
 
-// std::shared_ptr<Model> CloneModel(const std::shared_ptr<Model>& originalModel);
-
-#endif // ASSET_H
+// std::shared_ptr<Model> CloneModel(const std::shared_ptr<Model>&
+// originalModel);

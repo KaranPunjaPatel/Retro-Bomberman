@@ -1,10 +1,10 @@
 #pragma once
-#ifndef STRUCTURE_H
-#define STRUCTURE_H
+
 #include <cstdint>
 #include <vector>
-#include <raylib.h>
 #include <iostream>
+
+#include <raylib.h>
 
 #include "macros.h"
 // #include "player.h"
@@ -44,8 +44,3 @@ struct Level
   size_t bombRadius;
 
 };
-
-
-
-
-#endif

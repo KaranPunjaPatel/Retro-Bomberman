@@ -1,6 +1,7 @@
 
-#include "button.h"
 #include <iostream>
+
+#include "button.h"
 
 Button::Button(Rectangle bounds,
                 std::string text,

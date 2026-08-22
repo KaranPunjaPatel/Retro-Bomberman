@@ -1,147 +1,140 @@
 
-#include "game.h"
-#include "level.h"
 #include <string>
+
 // #include <raygui.h>
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 
-// Check if point is inside a rounded rectangle
-#define BUTTON_WIDTH  200
-#define BUTTON_HEIGHT 100
-#define MOVING_BG     0 
-#define CUSTOM_STYLE     0 
+#include "game.h"
+#include "level.h"
 
-Game::Game() 
-    : prevScreenWidth(GetScreenWidth()), prevScreenHeight(GetScreenHeight()), page(0), 
-      startButton(
-          Rectangle{ 
-            (float)GetScreenWidth() / 2 - BUTTON_WIDTH * 2, 
-            (float)GetScreenHeight() / 2, 
-            BUTTON_WIDTH, 
-            BUTTON_HEIGHT 
-          },
-          "Play Offline"
-        ),
-      oneVsOneButton(
-          Rectangle{ 
-            (float)GetScreenWidth() / 2 - BUTTON_WIDTH / 2, 
-            (float)GetScreenHeight() / 2, 
-            BUTTON_WIDTH, 
-            BUTTON_HEIGHT 
-          },
-          "1 vs 1"
-        ),
-      onlineButton(
-          Rectangle{ 
-            (float)GetScreenWidth() / 2 + BUTTON_WIDTH, 
-            (float)GetScreenHeight() / 2, 
-            BUTTON_WIDTH, 
-            BUTTON_HEIGHT 
-          },
-          "Play Online"
-        ),
+constexpr int BUTTON_WIDTH = 200;
+constexpr int BUTTON_HEIGHT = 100;
+
+Game::Game()
+    : prevScreenWidth(GetScreenWidth()), prevScreenHeight(GetScreenHeight()), page(0),
       returnButton(
-          Rectangle{ 
-            (float)GetScreenWidth() / 2 - BUTTON_WIDTH / 2, 
-            (float)GetScreenHeight() / 2 + (float)BUTTON_HEIGHT / 1.5f, 
-            BUTTON_WIDTH, 
-            BUTTON_HEIGHT / 2 
-          },
-          "Return"
-        ),
-      bgOffsetX(0.0f), speed(100.0f)
+          Rectangle{
+              (float)GetScreenWidth() / 2 - BUTTON_WIDTH / 2,
+              (float)GetScreenHeight() / 2 + (float)BUTTON_HEIGHT / 1.5f,
+              BUTTON_WIDTH,
+              BUTTON_HEIGHT / 2},
+          "Return")
 {
-  background   = getTexture(t_BG);
+
+  background = getTexture(t_BG);
   textureTitle = getTexture(t_TITLE);
+
+  SetTextureFilter(background, TEXTURE_FILTER_BILINEAR);
+  SetTextureFilter(textureTitle, TEXTURE_FILTER_BILINEAR);
 
   GuiLoadStyle("./src/style_sunny.rgs");
   GuiSetStyle(DEFAULT, TEXT_SIZE, 22);
-
 }
 
-Game::~Game(){}
+Game::~Game() {}
 
-// This function is used to initialize the map with the map level 
 void Game::LoadMap(int index)
 {
-  if(index == -1){
+  std::cout << "[DEBUG] Loading map for index: " << index << std::endl;
+  if (index == -1)
+  {
     map = std::make_shared<Map1vs1>(GetOneVsOneLevel());
-  }else{
+  }
+  else
+  {
     map = std::make_shared<Map>(GetLevel(index));
   }
+  std::cout << "[DEBUG] Map created, initializing..." << std::endl;
   map->Initialize(map);
+  std::cout << "[DEBUG] Map initialized successfully!" << std::endl;
 }
 
 void Game::Draw()
 {
-  switch(page){
-    case 0:{
-      DrawBg();
-      DrawStartingPage();
-      break;
-    }
-    case 1:{
-      DrawBg();
-      DrawLevelChoosingPage();
-      break;
-    }
-    case 2:{
-      ClearBackground(Color{20, 160, 133, 255});
-      map->Draw();
-      if(map->AllEnemiesDied()){
-        map->DrawLevelEndUI("Level Cleared");
-        HandleChanges(true);
-        returnButton.Draw();
-      }
-      else if(map->IfPlayerDied()){
-        if(map->level.type == LvlType::OFFLINE){
-          map->DrawLevelEndUI("Level Failed");
-        }else if(map->level.type == LvlType::ONE_VS_ONE){
-          if(map->players.at(map->playerId)->alive)
-            map->DrawLevelEndUI("Player 1 Wins");
-          else 
-            map->DrawLevelEndUI("Player 2 Wins");
-
-        }
-        HandleChanges(true);
-        returnButton.Draw();
-      }
-      break;
-    }
-
+  switch (page)
+  {
+  case 0:
+  {
+    DrawBg();
+    DrawStartingPage();
+    break;
   }
-}
+  case 1:
+  {
+    DrawBg();
+    DrawLevelChoosingPage();
+    break;
+  }
+  case 2:
+  {
+    ClearBackground(Color{20, 160, 133, 255});
+    // std::cout << "[GAME] 4. Map Draw Start" << std::endl;
+    map->Draw();
+    // std::cout << "[GAME] 5. Map Draw End" << std::endl;
 
-void Game::MoveBg() 
-{
-  bgOffsetX -= speed * GetFrameTime();  // Move left
-  if (bgOffsetX <= -background.width) bgOffsetX = 0;
+    if (GuiButton(Rectangle{(float)GetScreenWidth() - 120, 50, 100, 40}, "Exit") || IsKeyPressed(KEY_ESCAPE))
+    {
+      page = 0; // Return to Main Menu
+      return;
+    }
+
+    if (map->AllEnemiesDied())
+    {
+      map->DrawLevelEndUI("Level Cleared");
+      HandleChanges(true);
+      returnButton.Draw();
+    }
+    else if (map->IfPlayerDied())
+    {
+      if (map->level.type == LvlType::OFFLINE)
+      {
+        map->DrawLevelEndUI("Level Failed");
+      }
+      else if (map->level.type == LvlType::ONE_VS_ONE)
+      {
+        if (map->players.at(map->playerId)->IsAlive())
+          map->DrawLevelEndUI("Player 1 Wins");
+        else
+          map->DrawLevelEndUI("Player 2 Wins");
+      }
+      HandleChanges(true);
+      returnButton.Draw();
+    }
+    break;
+  }
+  }
 }
 
 void Game::DrawBg()
 {
-  if(MOVING_BG == 1){
-    DrawTexture(background, (int)bgOffsetX, 0, WHITE);
-    DrawTexture(background, (int)bgOffsetX + background.width, 0, WHITE);
-  }
-  else
-  {
-    Rectangle source = { 0, 0, (float)background.width, (float)background.height }; // Full texture
-    Rectangle dest = { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }; // Fit to screen
+  // Rectangle source = {0, 0, (float)background.width, (float)background.height};
+  // Rectangle dest = {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()};
+  // DrawTexturePro(background, source, dest, {0, 0}, 0.0f, WHITE);
 
-    DrawTexturePro(background, source, dest, { 0, 0 }, 0.0f, WHITE); // Scale to screen size
-  }
-
+  float screenW = (float)GetScreenWidth();
+  float screenH = (float)GetScreenHeight();
+  float bgW = (float)background.width;
+  float bgH = (float)background.height;
+  // Calculate scale factor to cover the entire screen without stretching ("Aspect Cover")
+  float scale = std::max(screenW / bgW, screenH / bgH);
+  float destW = bgW * scale;
+  float destH = bgH * scale;
+  // Center the background image
+  float destX = (screenW - destW) / 2.0f;
+  float destY = (screenH - destH) / 2.0f;
+  Rectangle source = {0.0f, 0.0f, bgW, bgH};
+  Rectangle dest = {destX, destY, destW, destH};
+  DrawTexturePro(background, source, dest, Vector2{0.0f, 0.0f}, 0.0f, WHITE);
 }
-
 
 void Game::HandleChanges(bool definitely)
 {
-  int currScreenWidth  = GetScreenWidth();
+  int currScreenWidth = GetScreenWidth();
   int currScreenHeight = GetScreenHeight();
 
-  if(definitely || (prevScreenWidth != currScreenWidth || prevScreenHeight != currScreenHeight)){
+  if (definitely || (prevScreenWidth != currScreenWidth || prevScreenHeight != currScreenHeight))
+  {
     prevScreenWidth = currScreenWidth;
     prevScreenHeight = currScreenHeight;
 
@@ -149,294 +142,126 @@ void Game::HandleChanges(bool definitely)
 
     switch (page)
     {
-      case 0:{
-
-        startButton.Reinitialise(Rectangle{ 
-            (float)currScreenWidth / 2 - BUTTON_WIDTH * 2, 
-            (float)currScreenHeight / 2, 
-            BUTTON_WIDTH, 
-            BUTTON_HEIGHT 
-          });
-
-        oneVsOneButton.Reinitialise(
-            Rectangle{ 
-              (float)currScreenWidth / 2 - BUTTON_WIDTH / 2, 
-              (float)currScreenHeight / 2, 
-              BUTTON_WIDTH, 
-              BUTTON_HEIGHT 
-            }
-          );
-        onlineButton.Reinitialise(
-            Rectangle{ 
-              (float)currScreenWidth / 2 + BUTTON_WIDTH, 
-              (float)currScreenHeight / 2, 
-              BUTTON_WIDTH, 
-              BUTTON_HEIGHT 
-            }
-          );
-
-        break;
-      }
-      case 1:{
-
-        size_t numberOfLevel = lvlBtnArr.size();
-        int partitions = (numberOfLevel*2)+1;
-        float partitionX = currScreenWidth / partitions;
-
-        for(size_t i = 0; i < numberOfLevel; i++){
-          lvlBtnArr[i].button.Reinitialise(Rectangle {
-            partitionX * (i*2+1),                   // 1, 3, 5
-            (float)currScreenHeight/2 - BUTTON_HEIGHT/2,
-            partitionX,
-            BUTTON_HEIGHT
-          });
-        }
-        break;
-      }
-      case 2:{
-        returnButton.Reinitialise(Rectangle{ 
-            (float)currScreenWidth / 2 - BUTTON_WIDTH / 2, 
-            (float)currScreenHeight / 2 + (float)BUTTON_HEIGHT / 1.5f, 
-            BUTTON_WIDTH, 
-            BUTTON_HEIGHT / 2 
-          });
-        break;
-      }
+    case 2:
+    {
+      returnButton.Reinitialise(Rectangle{
+          (float)currScreenWidth / 2 - BUTTON_WIDTH / 2,
+          (float)currScreenHeight / 2 + (float)BUTTON_HEIGHT / 1.5f,
+          BUTTON_WIDTH,
+          BUTTON_HEIGHT / 2});
+      break;
     }
-
-    
+    }
   }
-  
 }
 
 void Game::HandleInput()
 {
   switch (page)
   {
-  case 0:{
-      if(MOVING_BG == 1){
-        MoveBg();
-      }
-      if(CUSTOM_STYLE == 1){
-        HandleStartingInput();
-      }
+  case 2:
+  {
+    // std::cout << "[GAME] 1. ExplodeBomb" << std::endl;
+    map->ExplodeBomb();
+    // std::cout << "[GAME] 2. Map HandleInput" << std::endl;
+    map->HandleInput();
+    // std::cout << "[GAME] 3. MoveCamera" << std::endl;
+    map->MoveCamera();
+    if (map->AllEnemiesDied() || map->IfPlayerDied())
+    {
+      Vector2 p = GetMousePosition();
 
-      break;
-    }
-    case 1:{
-      if(MOVING_BG == 1){
-        MoveBg();
-      }
-      if(CUSTOM_STYLE == 1){
-        HandleLevelChoosingInput();
-      }
-
-      break;
-    }
-    case 2:{
-      map->ExplodeBomb();
-      map->HandleInput();
-      map->MoveCamera();
-      if(map->AllEnemiesDied() || map->IfPlayerDied()){
-        Vector2 p = GetMousePosition();
-  
-        if(CheckCollisionPointButton(p, returnButton)){
-          returnButton.AnimateStart();
-          if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
-            page = 1;
-            LoadLevelChoosingPage();
-          }
-        }else{
-          returnButton.AnimateReturn();
+      if (CheckCollisionPointButton(p, returnButton))
+      {
+        returnButton.AnimateStart();
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+        {
+          page = 1;
         }
       }
-      break;
+      else
+      {
+        returnButton.AnimateReturn();
+      }
     }
-  
+    break;
+  }
+
   default:
     break;
   }
-  
 }
 
 void Game::DrawStartingPage()
 {
   // RenderTexture2D tex;
-  
-  float ratio = (GetScreenHeight() * .5f)/textureTitle.height;
 
-  DrawTextureEx(textureTitle, {(GetScreenWidth() - textureTitle.width * ratio)/2.0f, 0}, 0, ratio, WHITE);
+  // float ratio = (GetScreenHeight() * .5f) / textureTitle.height;
 
-  if(CUSTOM_STYLE == 1){
+  // DrawTextureEx(textureTitle, {(GetScreenWidth() - textureTitle.width * ratio) / 2.0f, 0}, 0, ratio, WHITE);
 
-    startButton.Draw();
-    oneVsOneButton.Draw();
-    onlineButton.Draw();
-  }else{
-    if(GuiButton(Rectangle{ 
-              (float)GetScreenWidth() / 2 - BUTTON_WIDTH * 2, 
-              (float)GetScreenHeight() / 2, 
-              BUTTON_WIDTH, 
-              BUTTON_HEIGHT 
-            },
-            "Play Offline")
-          ){
-            page = 1;
-            LoadLevelChoosingPage();
-          }
-
-    if(GuiButton(Rectangle{ 
-              (float)GetScreenWidth() / 2 - BUTTON_WIDTH / 2, 
-              (float)GetScreenHeight() / 2, 
-              BUTTON_WIDTH, 
-              BUTTON_HEIGHT 
-            },
-            "1 vs 1")
-          ){
-            page = 2;
-            LoadMap(-1);
-          }
-
-    if(GuiButton(Rectangle{ 
-              (float)GetScreenWidth() / 2 + BUTTON_WIDTH, 
-              (float)GetScreenHeight() / 2, 
-              BUTTON_WIDTH, 
-              BUTTON_HEIGHT 
-            },
-            "Play Online")
-          ){
-            // page = 2;
-            // LoadMap(-1);
-          }
+  if (GuiButton(Rectangle{
+                    (float)GetScreenWidth() / 2 - BUTTON_WIDTH * 2,
+                    (float)GetScreenHeight() / 2,
+                    BUTTON_WIDTH,
+                    BUTTON_HEIGHT},
+                "Play Offline"))
+  {
+    page = 1;
   }
 
-  
-
-}
-
-void Game::HandleStartingInput()
-{ 
-  Vector2 p = GetMousePosition();
-  
-  if(CheckCollisionPointButton(p, startButton)){
-    startButton.AnimateStart();
-    if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
-      page = 1;
-      LoadLevelChoosingPage();
-    }
-  }else{
-    startButton.AnimateReturn();
-    // std::cout << "OUT\n";
+  if (GuiButton(Rectangle{
+                    (float)GetScreenWidth() / 2 - BUTTON_WIDTH / 2,
+                    (float)GetScreenHeight() / 2,
+                    BUTTON_WIDTH,
+                    BUTTON_HEIGHT},
+                "1 vs 1"))
+  {
+    page = 2;
+    LoadMap(-1);
   }
 
-  if(CheckCollisionPointButton(p, oneVsOneButton)){
-    oneVsOneButton.AnimateStart();
-    if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
-      page = 2;
-      LoadMap(-1);
-      // LoadLevelChoosingPage();
-    }
-  }else{
-    oneVsOneButton.AnimateReturn();
-  }
-
-  if(CheckCollisionPointButton(p, onlineButton)){
-    onlineButton.AnimateStart();
-    if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
-      // page = 1;
-      // LoadLevelChoosingPage();
-    }
-  }else{
-    onlineButton.AnimateReturn();
-  }
-}
-
-void Game::LoadLevelChoosingPage()
-{
-  int numberOfLevel = 6;
-  if(lvlBtnArr.size() == numberOfLevel) return;
-  int partitions = (numberOfLevel*2)+1;
-
-  int screenWidth  = GetScreenWidth();
-  int screenHeight = GetScreenHeight();
-
-  float partitionX = screenWidth / partitions;
-  // float partitionY = screenHeight / partitions;
-
-  for(int i = 0; i < numberOfLevel; i++){
-    
-    std::string text;
-    if(i == 0){
-      text = "Random";
-    }else{
-      text = "Level " + std::to_string(i);
-    }
-
-    lvlBtnArr.push_back(LevelButton{Rectangle {
-      partitionX * (i*2+1),                   // 1, 3, 5
-      (float)screenHeight/2 - BUTTON_HEIGHT/2,
-      partitionX,
-      BUTTON_HEIGHT
-    },text,i,i});
-
+  if (GuiButton(Rectangle{
+                    (float)GetScreenWidth() / 2 + BUTTON_WIDTH,
+                    (float)GetScreenHeight() / 2,
+                    BUTTON_WIDTH,
+                    BUTTON_HEIGHT},
+                "Play Online"))
+  {
   }
 }
 
 void Game::DrawLevelChoosingPage()
-{ 
-  if(CUSTOM_STYLE == 1){
-    for(auto& lbtn: lvlBtnArr){
-      lbtn.button.Draw();
-    }
-  }else{
-    int numberOfLevel = 6;
-    int partitions = (numberOfLevel*2)+1;
-
-    int screenWidth  = GetScreenWidth();
-    int screenHeight = GetScreenHeight();
-
-    float partitionX = screenWidth / partitions;
-
-    for(int i = 0; i < numberOfLevel; i++){
-      
-      std::string text;
-      if(i == 0){
-        text = "Random";
-      }else{
-        text = "Level " + std::to_string(i);
-      }
-
-
-      if(GuiButton(Rectangle {
-                  partitionX * (i*2+1),                   // 1, 3, 5
-                  (float)screenHeight/2 - BUTTON_HEIGHT/2,
-                  partitionX,
-                  BUTTON_HEIGHT
-                },text.c_str())
-            ){
-              loadLevels();
-              page = 2;
-              LoadMap(i);
-            }
-    }
-  }
-}
-
-void Game::HandleLevelChoosingInput()
 {
-  Vector2 p = GetMousePosition();
-  for(auto& lbtn: lvlBtnArr){
-    if(CheckCollisionPointButton(p, lbtn.button)){
-      lbtn.button.AnimateStart();
-      if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
-        loadLevels();
-        page = 2;
-        LoadMap(lbtn.level);
-      }
-    }else{
-      lbtn.button.AnimateReturn();
+  if (GuiButton(Rectangle{20, 20, 100, 40}, "< Back") || IsKeyPressed(KEY_ESCAPE))
+  {
+    page = 0;
+    return;
+  }
+
+  const size_t numberOfLevel = 6;
+  int partitions = (numberOfLevel * 2) + 1;
+
+  int screenWidth = GetScreenWidth();
+  int screenHeight = GetScreenHeight();
+
+  float partitionX = screenWidth / partitions;
+
+  for (int i = 0; i < (int)numberOfLevel; i++)
+  {
+    std::string text = (i == 0) ? "Random" : "Level " + std::to_string(i);
+
+    if (GuiButton(Rectangle{
+                      partitionX * (i * 2 + 1),
+                      (float)screenHeight / 2 - BUTTON_HEIGHT / 2,
+                      partitionX,
+                      BUTTON_HEIGHT},
+                  text.c_str()))
+    {
+      loadLevels();
+      page = 2;
+      LoadMap(i);
+      break;
     }
   }
 }
-
-

@@ -1,11 +1,13 @@
 #pragma once
-#include <raylib.h>
+
 #include <string>
 
-#define DEF_ANIMATION_OFFSET -2.0f
-#define ANIMATION_OFFSET 10
-#define ANIMATION_START_SPEED 50.0f
-#define ANIMATION_RETURN_SPEED 30.f
+#include <raylib.h>
+
+constexpr float DEF_ANIMATION_OFFSET = -2.0f;
+constexpr float ANIMATION_OFFSET = 10.0f;
+constexpr float ANIMATION_START_SPEED = 50.0f;
+constexpr float ANIMATION_RETURN_SPEED = 30.0f;
 
 struct Button {
     Rectangle bounds;
