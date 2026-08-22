@@ -35,6 +35,9 @@
 *.out
 *.app
 
+# Ignore local analysis doc
+analysis.md
+
 # End of https://www.toptal.com/developers/gitignore/api/c++
 
 # 1. Ignore everything in the resources folder
